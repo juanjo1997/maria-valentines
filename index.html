@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For My Valentine 💌</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Great+Vibes&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #fce4ec;
+            --primary-red: #d32f2f;
+            --soft-pink: #f8bbd0;
+            --deep-rose: #c2185b;
+            --paper-color: #fffaf0;
+            --text-color: #4a4a4a;
+            --envelope-color: #e57373;
+            --envelope-shadow: rgba(0,0,0,0.2);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            height: 100vh;
+            width: 100vw;
+            background: radial-gradient(circle at center, #ffebee 0%, #ffcdd2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Montserrat', sans-serif;
+            overflow: hidden;
+            perspective: 1000px;
+        }
+
+        /* --- Floating Background Particles --- */
+        .bg-particle {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 50%;
+            pointer-events: none;
+            animation: float-up linear infinite;
+        }
+
+        @keyframes float-up {
+            0% { transform: translateY(110vh) scale(0.8); opacity: 0; }
+            20% { opacity: 0.8; }
+            80% { opacity: 0.8; }
+            100% { transform: translateY(-10vh) scale(1.2); opacity: 0; }
+        }
+
+        /* --- The Container --- */
+        .container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* --- Envelope Styles --- */
+        .envelope-wrapper {
+            position: relative;
+            width: 300px;
+            height: 200px;
+            cursor: pointer;
+            transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+            z-index: 10;
+        }
+
+        .envelope-wrapper:hover {
+            transform: scale(1.05);
+        }
+
+        .envelope-wrapper.open {
+            cursor: default;
+            animation: slideDown 1s forwards;
+        }
+
+        @keyframes slideDown {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(150px); opacity: 0; pointer-events: none; }
+        }
+
+        .envelope {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: var(--envelope-color);
+            border-radius: 0 0 10px 10px;
+            box-shadow: 0 15px 35px var(--envelope-shadow);
+            display: flex;
+            justify-content: center;
+            overflow: visible; /* Important for flap */
+        }
+
+        /* The back of the envelope (inside) */
+        .envelope::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #ef5350; /* Slightly darker */
+            border-radius: 5px;
+            z-index: 1;
+        }
+
+        /* The front folds */
+        .fold-left, .fold-right, .fold-bottom {
+            position: absolute;
+            z-index: 3;
+            pointer-events: none;
+        }
+
+        .fold-left {
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 0;
+            border-top: 100px solid transparent;
+            border-bottom: 100px solid transparent;
+            border-left: 150px solid #ef9a9a; /* Lightest */
+        }
+
+        .fold-right {
+            top: 0;
+            right: 0;
+            width: 0;
+            height: 0;
+            border-top: 100px solid transparent;
+            border-bottom: 100px solid transparent;
+            border-right: 150px solid #ef9a9a;
+        }
+
+        .fold-bottom {
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 0;
+            border-left: 150px solid transparent;
+            border-right: 150px solid transparent;
+            border-bottom: 110px solid #e57373; /* Match base */
+            z-index: 4;
+            border-radius: 0 0 5px 5px;
+        }
+
+        /* The Top Flap */
+        .fold-top {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 0;
+            border-left: 150px solid transparent;
+            border-right: 150px solid transparent;
+            border-top: 110px solid #ef5350; /* Darker for depth */
+            transform-origin: top;
+            transition: transform 0.6s 0.2s cubic-bezier(0.4, 0, 0.2, 1), z-index 0.2s;
+            z-index: 5;
+        }
+
+        .envelope-wrapper.open .fold-top {
+            transform: rotateX(180deg);
+            z-index: 1; /* Go behind the letter */
+        }
+
+        /* The Wax Seal / Heart */
+        .seal {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -80%);
+            width: 50px;
+            height: 50px;
+            background: #d32f2f;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            z-index: 6;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .seal i {
+            font-style: normal;
+            font-size: 24px;
+            color: #ffcdd2;
+        }
+
+        .envelope-wrapper:hover .seal {
+            transform: translate(-50%, -80%) scale(1.1);
+        }
+
+        .envelope-wrapper.open .seal {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .tap-hint {
+            position: absolute;
+            bottom: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: var(--deep-rose);
+            font-weight: 500;
+            font-size: 0.9rem;
+            opacity: 0.7;
+            animation: pulseText 2s infinite;
+            white-space: nowrap;
+        }
+
+        @keyframes pulseText {
+            0%, 100% { opacity: 0.7; }
+            50% { opacity: 1; transform: translateX(-50%) scale(1.05); }
+        }
+
+        /* --- The Letter (Main Content) --- */
+        .letter-content {
+            position: absolute;
+            width: 90%;
+            max-width: 500px;
+            background: var(--paper-color);
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+            text-align: center;
+            opacity: 0;
+            transform: scale(0.8) translateY(50px);
+            pointer-events: none;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .letter-content::before {
+            /* Paper texture grain */
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .letter-content.visible {
+            animation: letterEntrance 0.8s 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+            pointer-events: auto;
+        }
+
+        @keyframes letterEntrance {
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        .letter-header {
+            font-family: 'Great Vibes', cursive;
+            font-size: 3.5rem;
+            color: var(--deep-rose);
+            margin-bottom: 20px;
+            line-height: 1.2;
+            position: relative;
+            z-index: 1;
+        }
+
+        .letter-body {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.35rem;
+            color: var(--text-color);
+            line-height: 1.6;
+            margin-bottom: 30px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .highlight {
+            color: var(--deep-rose);
+            font-weight: 600;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 40px;
+            justify-content: center;
+            margin-top: 20px;
+            position: relative;
+            z-index: 2;
+            width: 100%;
+        }
+
+        .btn {
+            padding: 12px 35px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        .btn-yes {
+            background: var(--deep-rose);
+            color: white;
+            box-shadow: 0 4px 15px rgba(194, 24, 91, 0.3);
+        }
+
+        .btn-yes:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(194, 24, 91, 0.4);
+            background: #ad1457;
+        }
+
+        .btn-no {
+            background: #fff;
+            color: #757575;
+            border: 1px solid #ddd;
+        }
+
+        /* --- Success / Celebration View --- */
+        .celebration-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(255, 255, 255, 0.95);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 1s ease;
+            text-align: center;
+        }
+
+        .celebration-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .celebration-text {
+            font-family: 'Great Vibes', cursive;
+            font-size: 4rem;
+            color: var(--deep-rose);
+            transform: scale(0.5);
+            transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .celebration-overlay.active .celebration-text {
+            transform: scale(1);
+        }
+
+        .sub-text {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.5rem;
+            color: var(--text-color);
+            margin-top: 20px;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.8s 0.5s ease;
+        }
+
+        .celebration-overlay.active .sub-text {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* --- Polaroid Style Photo --- */
+        .polaroid {
+            background: white;
+            padding: 12px 12px 35px 12px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+            transform: rotate(-2deg);
+            width: 240px;
+            margin-bottom: 30px;
+            position: relative;
+            border: 1px solid rgba(0,0,0,0.05);
+            transition: transform 0.3s ease;
+        }
+
+        .polaroid:hover {
+            transform: rotate(0deg) scale(1.05);
+        }
+
+        /* Washi Tape Effect */
+        .polaroid::before {
+            content: '';
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%) rotate(2deg);
+            width: 90px;
+            height: 30px;
+            background: rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(2px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            z-index: 2;
+        }
+
+        /* Live Photo Badge Styling */
+        .live-badge {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(4px);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+            z-index: 5;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            letter-spacing: 1px;
+            pointer-events: none;
+        }
+
+        .live-badge span {
+            color: #ffeb3b;
+            font-size: 14px;
+            animation: pulseLive 2s infinite;
+        }
+
+        @keyframes pulseLive {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .polaroid img, .polaroid video {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            display: block;
+            border: 1px solid #f0f0f0;
+        }
+
+        .polaroid-caption {
+            font-family: 'Great Vibes', cursive;
+            font-size: 1.8rem;
+            color: var(--text-color);
+            margin-top: 10px;
+            text-align: center;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .envelope-wrapper { width: 280px; height: 180px; }
+            .letter-content { width: 85%; padding: 30px 20px; }
+            .letter-header { font-size: 2.8rem; }
+            .letter-body { font-size: 1.1rem; }
+            .btn { padding: 10px 25px; }
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Background Elements -->
+    <div id="bg-particles"></div>
+
+    <!-- Main Container -->
+    <div class="container">
+        
+        <!-- The Envelope -->
+        <div class="envelope-wrapper" id="envelope">
+            <div class="envelope">
+                <div class="fold-left"></div>
+                <div class="fold-right"></div>
+                <div class="fold-bottom"></div>
+                <div class="fold-top"></div>
+                <div class="seal">
+                    <i>❤️</i>
+                </div>
+            </div>
+            <div class="tap-hint">Click to open</div>
+        </div>
+
+        <!-- The Letter Card -->
+        <div class="letter-content" id="letter">
+            
+            <!-- Polaroid Photo -->
+            <div class="polaroid">
+                <div class="live-badge"><span>◎</span> LIVE</div>
+                <!-- 
+                   To use a Live Photo: 
+                   1. Convert your Live Photo to a .mp4 video.
+                   2. Replace the src below with your video file path.
+                -->
+                <video autoplay loop muted playsinline poster="/Users/juanbeltran/code/valentines-day-2025/43630BAD-74DC-40FC-BBD4-79BFAF32F484_1_105_c.jpeg">
+                    <source src="us.mp4" type="video/mp4">
+                    <img src="/Users/juanbeltran/code/valentines-day-2025/us.mp4" alt="Our Memory">
+                </video>
+                <div class="polaroid-caption">Us ❤️</div>
+            </div>
+
+            <h1 class="letter-header">My Dearest...</h1>
+            <p class="letter-body">
+                Life is so much more beautiful with you by my side.
+                <br>I cherish every moment we share.
+                <br><br>
+                <span class="highlight">Will you be my Valentine?</span>
+            </p>
+            <div class="buttons">
+                <button class="btn btn-yes" id="yesBtn">Yes, Forever! 🌹</button>
+                <button class="btn btn-no" id="noBtn">No</button>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Celebration Screen -->
+    <div class="celebration-overlay" id="celebration">
+        <h1 class="celebration-text">Best. Decision. Ever. 💖</h1>
+        <p class="sub-text">I love you more than words can say!</p>
+    </div>
+
+    <script>
+        // --- 1. Background Particles ---
+        const bgContainer = document.getElementById('bg-particles');
+        function createParticle() {
+            const particle = document.createElement('div');
+            particle.classList.add('bg-particle');
+            
+            // Randomize size and position
+            const size = Math.random() * 20 + 10;
+            particle.style.width = `${size}px`;
+            particle.style.height = `${size}px`;
+            particle.style.left = `${Math.random() * 100}vw`;
+            
+            // Randomize color (soft pinks/whites)
+            const hue = Math.random() > 0.5 ? 340 : 350;
+            particle.style.background = `hsla(${hue}, 100%, 90%, ${Math.random() * 0.4 + 0.1})`;
+            
+            // Random duration
+            particle.style.animationDuration = `${Math.random() * 10 + 10}s`;
+            
+            bgContainer.appendChild(particle);
+            
+            // Cleanup
+            particle.addEventListener('animationend', () => particle.remove());
+        }
+        
+        setInterval(createParticle, 500);
+        // Initial batch
+        for(let i=0; i<15; i++) setTimeout(createParticle, i * 200);
+
+
+        // --- 2. Envelope Logic ---
+        const envelope = document.getElementById('envelope');
+        const letter = document.getElementById('letter');
+        
+        envelope.addEventListener('click', () => {
+            if (envelope.classList.contains('open')) return;
+            
+            envelope.classList.add('open');
+            // Hide the hint
+            document.querySelector('.tap-hint').style.display = 'none';
+            
+            // Reveal letter handled by CSS animation delay
+            letter.classList.add('visible');
+        });
+
+
+        // --- 3. Runaway "No" Button (Aggressive & Playful) ---
+        const noBtn = document.getElementById('noBtn');
+        let escapes = 0;
+        const dodgeTexts = [
+            "Are you sure? 🤨",
+            "Try again! 😉",
+            "Not that easy!",
+            "Oops! 🏃‍♂️",
+            "Think again! 💕",
+            "Almost had it!",
+            "Nice try! 😏",
+            "Hehe, nope!",
+            "Can't catch me!"
+        ];
+        
+        let buttonState = {
+            x: 0, y: 0, vx: 0, vy: 0
+        };
+        
+        let isAnimating = false;
+        let isFloating = false;
+        const MAX_SPEED = 10; // Lower max speed for control
+
+        function updatePhysics() {
+            if (!isFloating) return;
+
+            buttonState.vx *= 0.90; // High friction
+            buttonState.vy *= 0.90;
+
+            // Cap speed
+            const speed = Math.sqrt(buttonState.vx**2 + buttonState.vy**2);
+            if (speed > MAX_SPEED) {
+                const ratio = MAX_SPEED / speed;
+                buttonState.vx *= ratio;
+                buttonState.vy *= ratio;
+            }
+
+            buttonState.x += buttonState.vx;
+            buttonState.y += buttonState.vy;
+
+            const padding = 20;
+            const rect = noBtn.getBoundingClientRect();
+            const winW = window.innerWidth;
+            const winH = window.innerHeight;
+            
+            // Hard boundary clamping
+            if (buttonState.x < padding) {
+                buttonState.x = padding;
+                buttonState.vx = Math.abs(buttonState.vx) * 0.5; // Dampen bounce
+            } else if (buttonState.x + rect.width > winW - padding) {
+                buttonState.x = winW - rect.width - padding;
+                buttonState.vx = -Math.abs(buttonState.vx) * 0.5;
+            }
+
+            if (buttonState.y < padding) {
+                buttonState.y = padding;
+                buttonState.vy = Math.abs(buttonState.vy) * 0.5;
+            } else if (buttonState.y + rect.height > winH - padding) {
+                buttonState.y = winH - rect.height - padding;
+                buttonState.vy = -Math.abs(buttonState.vy) * 0.5;
+            }
+
+            // Apply transform
+            // Note: because we reparented to body, translate works in viewport coords
+            // if we set left/top to 0.
+            noBtn.style.transform = `translate(${buttonState.x}px, ${buttonState.y}px)`;
+
+            if (Math.abs(buttonState.vx) > 0.1 || Math.abs(buttonState.vy) > 0.1) {
+                requestAnimationFrame(updatePhysics);
+            } else {
+                isAnimating = false;
+            }
+        }
+
+        function runAway(e) {
+            // Only start running away once the letter is revealed
+            if (!letter.classList.contains('visible')) return;
+
+            const rect = noBtn.getBoundingClientRect();
+            const btnCenterX = rect.left + rect.width / 2;
+            const btnCenterY = rect.top + rect.height / 2;
+            
+            const mouseX = e.clientX || (e.touches ? e.touches[0].clientX : 0);
+            const mouseY = e.clientY || (e.touches ? e.touches[0].clientY : 0);
+
+            const dx = btnCenterX - mouseX;
+            const dy = btnCenterY - mouseY;
+            const dist = Math.sqrt(dx*dx + dy*dy);
+
+            // Trigger radius (90px sensitivity)
+            if (dist < 90) {
+                if (!isFloating) {
+                    isFloating = true;
+                    
+                    // Capture current position relative to viewport
+                    buttonState.x = rect.left;
+                    buttonState.y = rect.top;
+                    
+                    // REPARENT TO BODY to escape the transform context of the card
+                    document.body.appendChild(noBtn);
+                    
+                    noBtn.style.position = 'fixed';
+                    noBtn.style.left = '0';
+                    noBtn.style.top = '0';
+                    noBtn.style.margin = '0';
+                    noBtn.style.zIndex = '1000';
+                    noBtn.style.transform = `translate(${buttonState.x}px, ${buttonState.y}px)`;
+                }
+
+                const angle = Math.atan2(dy, dx);
+                // Push force (More aggressive but short-range)
+                const push = (90 - dist) * 0.6; 
+                
+                buttonState.vx += Math.cos(angle) * push;
+                buttonState.vy += Math.sin(angle) * push;
+
+                if (dist < 50) {
+                    escapes++;
+                    noBtn.innerText = dodgeTexts[escapes % dodgeTexts.length];
+                }
+                
+                if (!isAnimating) {
+                    isAnimating = true;
+                    requestAnimationFrame(updatePhysics);
+                }
+            }
+        }
+
+        document.addEventListener('mousemove', runAway);
+        document.addEventListener('touchmove', runAway, {passive: false});
+
+
+        // --- 4. Celebration Logic ---
+        const celebrationOverlay = document.getElementById('celebration');
+        
+        yesBtn.addEventListener('click', () => {
+            celebrationOverlay.classList.add('active');
+            
+            // Trigger Confetti
+            launchConfetti();
+        });
+
+        // Simple Canvas Confetti
+        function launchConfetti() {
+            const canvas = document.createElement('canvas');
+            canvas.style.position = 'fixed';
+            canvas.style.top = '0';
+            canvas.style.left = '0';
+            canvas.style.width = '100%';
+            canvas.style.height = '100%';
+            canvas.style.pointerEvents = 'none';
+            canvas.style.zIndex = '2000';
+            document.body.appendChild(canvas);
+
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            const particles = [];
+            const colors = ['#d32f2f', '#c2185b', '#f48fb1', '#ffcdd2', '#ffd700'];
+
+            for (let i = 0; i < 150; i++) {
+                particles.push({
+                    x: canvas.width / 2,
+                    y: canvas.height / 2,
+                    vx: (Math.random() - 0.5) * 15,
+                    vy: (Math.random() - 0.5) * 15 - 5, // Upward bias
+                    size: Math.random() * 8 + 4,
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    rotation: Math.random() * 360,
+                    rotationSpeed: (Math.random() - 0.5) * 10
+                });
+            }
+
+            function animateConfetti() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                let activeParticles = false;
+
+                particles.forEach(p => {
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    p.vy += 0.2; // Gravity
+                    p.rotation += p.rotationSpeed;
+
+                    if (p.y < canvas.height) activeParticles = true;
+
+                    ctx.save();
+                    ctx.translate(p.x, p.y);
+                    ctx.rotate((p.rotation * Math.PI) / 180);
+                    ctx.fillStyle = p.color;
+                    ctx.fillRect(-p.size/2, -p.size/2, p.size, p.size);
+                    ctx.restore();
+                });
+
+                if (activeParticles) {
+                    requestAnimationFrame(animateConfetti);
+                } else {
+                    canvas.remove();
+                }
+            }
+            animateConfetti();
+        }
+
+    </script>
+</body>
+</html>
